@@ -1,0 +1,11 @@
+*.http
+.#*w
+*~
+*#
+.#*
+node_modules/
+flymd.html
+flymd.md
+coverage/
+.tern-port
+yarn-error.log

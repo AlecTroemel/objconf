@@ -1,0 +1,9 @@
+{
+  "name": "objconf",
+  "version": "1.0.0",
+  "description": "merge json and env vars into config object ",
+  "main": "lib.js",
+  "repository": "https://github.com/AlecTroemel/objconf",
+  "author": "Alec Troemel <alec@mirusresearch.com>",
+  "license": "MIT"
+}
