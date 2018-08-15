@@ -20,15 +20,11 @@ None of the 100 config libraries on npm did what I wanted... so i created my own
     // env var paths are converted to lowercase
     // export PROJECT_A_B = 'something else'
     conf.merge_env('project');
-    let config = conf.get() === {
-        a: {
-            b: 'something else'
-        }
-        c: 67890
-    }
 
 
-    console.log(config.a.b);
+    let config = conf.get();
+    console.log(config.a.b); // => 'something else'
+    console.log(config.c); // => 67890
 ```
 
 
