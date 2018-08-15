@@ -6,7 +6,7 @@ None of the 100 config libraries on npm did what I wanted... so i created my own
 - merge env var's with a namespace. Allow nesting object values with underscores. Do a best effort conversion of the data type ('false' => boolean)
 
 ```js
-    const Config = require('./config.js');
+    const Config = require('objconf');
     conf.merge_defaults({
         a: {
             b: 'something'
@@ -20,7 +20,6 @@ None of the 100 config libraries on npm did what I wanted... so i created my own
     // env var paths are converted to lowercase
     // export PROJECT_A_B = 'something else'
     conf.merge_env('project');
-
 
     let config = conf.get();
     console.log(config.a.b); // => 'something else'
