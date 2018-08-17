@@ -6,6 +6,11 @@ None of the 100 config libraries on npm did what I wanted... so i created my own
 - merge env var's with a namespace. Allow nesting object values with underscores. Do a best effort conversion of the data type ('false' => boolean)
 - validate the configuration based on a given schema
 
+
+```
+$ yarn add objconf
+```
+
 ```js
     const Config = require('objconf');
     conf.merge_defaults({
@@ -33,7 +38,7 @@ None of the 100 config libraries on npm did what I wanted... so i created my own
     console.log(config.c); // => 67890
 ```
 
-### API
+# API
 
 ##### merge_defaults(obj)
 merge configuration with a given object
@@ -96,5 +101,20 @@ conf.merge_defaults({ a: 'test' });
 console.log(cong.get().a, ' = test')
 ```
 
-### TODO:
-- tests
+# Development #
+Issues and PR's are always welcome, just follow the prettier.js style guides described below.
+
+## Styling ##
+
+This project uses [Prettier.js](https://prettier.io/) for code formating and linting. I would recomend installing it globally as described [here](https://prettier.io/docs/en/install.html) and integrate it with your editor.
+
+here is the configuration used
+
+```
+--no-semi: false
+--single-quote: true
+--tab-width: 4
+--print-width: 100
+```
+
+check out `.eslint.rc` as well
