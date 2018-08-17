@@ -15,7 +15,7 @@ class Config {
         if (value === 'null') return null;
         if (value === 'undefined') return undefined;
         let number = Math.trunc(value);
-        return number === NaN ? value : number;
+        return isNaN(number) ? value : number;
     }
 
     _merge(target, source) {
