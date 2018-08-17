@@ -22,24 +22,14 @@ class Config {
         if (this._is_object(target) && this._is_object(source)) {
             for (const key in source) {
                 if (this._is_object(source[key])) {
-                    if (!target[key]) Object.assign(target, { [key]: {} });
+                    if (!target[key]) {
+                        Object.assign(target, { [key]: {} });
+                    }
                     this._merge(target[key], source[key]);
                 } else {
                     Object.assign(target, { [key]: source[key] });
                 }
             }
-        }
-    }
-
-    _set(target, path_array, value) {
-        if (path_array.length > 1) {
-            const key = path_array.shift();
-            if (target[key] === undefined) {
-                target[key] = {};
-            }
-            this._set(target[key], path_array, value);
-        } else {
-            target[path_array[0]] = value;
         }
     }
 
@@ -66,6 +56,49 @@ class Config {
                 );
             }
         }
+    }
+
+    _set(target, path_array, value) {
+        if (path_array.length > 1) {
+            const key = path_array.shift();
+            if (target[key] === undefined) {
+                target[key] = {};
+            }
+            this._set(target[key], path_array, value);
+        } else {
+            target[path_array[0]] = value;
+        }
+    }
+
+    _validate_recursively(target, schema, path = '') {
+        if (this._is_object(target) && this._is_object(schema)) {
+            for (const key in schema) {
+                if (this._is_object(schema[key])) {
+                    if (this._is_object(target[key])) {
+                        this._validate_recursively(target[key], schema[key], `${path}${key}.`);
+                    } else {
+                        throw `expected ${path}${key} to be an object, was ${typeof target[key]}`;
+                    }
+                } else {
+                    // need to special case null since its type is 'object'
+                    if (schema[key] === 'null') {
+                        if (target[key] !== null) {
+                            throw `expected ${path}${key} to be null, was ${typeof target[key]}`;
+                        }
+                    } else {
+                        if (typeof target[key] !== schema[key]) {
+                            throw `expected ${path}${key} to be a ${
+                                schema[key]
+                            }, was ${typeof target[key]}`;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    validate(schema) {
+        this._validate_recursively(this.conf, schema);
     }
 
     get() {
