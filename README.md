@@ -4,6 +4,7 @@ None of the 100 config libraries on npm did what I wanted... so i created my own
 - be able to set default values
 - merge config from json file at a given path
 - merge env var's with a namespace. Allow nesting object values with underscores. Do a best effort conversion of the data type ('false' => boolean)
+- validate the configuration based on a given schema
 
 ```js
     const Config = require('objconf');
