@@ -44,7 +44,7 @@ $ yarn add objconf
 ##### merge_defaults(obj)
 merge configuration with a given object
 
-```
+```js
 conf.merge_defaults({
     a: {
         b: 'something'

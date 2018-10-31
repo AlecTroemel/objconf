@@ -6,6 +6,17 @@
   "repository": "https://github.com/AlecTroemel/objconf",
   "author": "Alec Troemel <alec@mirusresearch.com>",
   "license": "MIT",
+  "keywords": [
+    "conf",
+    "config",
+    "configuration",
+    "env",
+    "environment",
+    "node-config",
+    "es6",
+    "file",
+    "validate"
+  ],
   "devDependencies": {
     "ava": "^0.25.0"
   },
