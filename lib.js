@@ -37,9 +37,15 @@ class Config {
         this._merge(this.conf, source);
     }
 
-    merge_file(path) {
-        const source = Object.assign(JSON.parse(fs.readFileSync(path, 'utf8')));
-        this._merge(this.conf, source);
+    merge_file(path, required = false) {
+        try {
+            const source = Object.assign(JSON.parse(fs.readFileSync(path, 'utf8')));
+            this._merge(this.conf, source);
+        } catch (err) {
+            if (required) {
+                throw err;
+            }
+        }
     }
 
     merge_env(prefix) {
@@ -77,19 +83,25 @@ class Config {
                     if (this._is_object(target[key])) {
                         this._validate_recursively(target[key], schema[key], `${path}${key}.`);
                     } else {
-                        throw `expected ${path}${key} to be an object, was ${typeof target[key]}`;
+                        throw new TypeError(
+                            `expected ${path}${key} to be an object, was ${typeof target[key]}`
+                        );
                     }
                 } else {
                     // need to special case null since its type is 'object'
                     if (schema[key] === 'null') {
                         if (target[key] !== null) {
-                            throw `expected ${path}${key} to be null, was ${typeof target[key]}`;
+                            throw new TypeError(
+                                `expected ${path}${key} to be null, was ${typeof target[key]}`
+                            );
                         }
                     } else {
                         if (typeof target[key] !== schema[key]) {
-                            throw `expected ${path}${key} to be a ${
-                                schema[key]
-                            }, was ${typeof target[key]}`;
+                            throw new TypeError(
+                                `expected ${path}${key} to be a ${schema[key]}, was ${typeof target[
+                                    key
+                                ]}`
+                            );
                         }
                     }
                 }
@@ -102,7 +114,7 @@ class Config {
     }
 
     get() {
-        return this.conf;
+        return { ...this.conf };
     }
 }
 

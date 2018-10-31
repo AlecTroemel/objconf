@@ -1,8 +1,9 @@
 None of the 100 config libraries on npm did what I wanted... so i created my own. Works a little bit like the wonderful [rust config crate](https://crates.io/crates/config). Goals of this projects include
 
+- no dependencies
 - treat the config like an object, not a key value store
 - be able to set default values
-- merge config from json file at a given path
+- merge config from json file at a given path, this is optional
 - merge env var's with a namespace. Allow nesting object values with underscores. Do a best effort conversion of the data type ('false' => boolean)
 - validate the configuration based on a given schema
 
@@ -52,11 +53,12 @@ conf.merge_defaults({
 });
 ```
 
-##### merge_file(filepath)
-merge configuration from a json file given its path
+##### merge_file(filepath, required=false)
+merge configuration from a json file given its path. When required is false, any error on reading the file will be suppressed. set required to `true` to raise those errors.
 
 ```js
-conf.merge_file('./config.json');
+conf.merge_file('./config.json'); // suppresses errors, good for local dev config
+conf.merge_file('./config.json', true); // raises errors
 ```
 
 ##### merge_env(prefix)
@@ -94,7 +96,7 @@ conf.validate({
 
 
 ##### get()
-return the configuration object
+return a copy of the configuration object
 
 ```js
 conf.merge_defaults({ a: 'test' });
@@ -103,6 +105,9 @@ console.log(cong.get().a, ' = test')
 
 # Development #
 Issues and PR's are always welcome, just follow the prettier.js style guides described below.
+
+## Testing ##
+this project uses ava, just run `yarn test` (or `npm test` if your into that sort of thing). Test's are good examples on how to use this package
 
 ## Styling ##
 
