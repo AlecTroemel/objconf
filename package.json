@@ -1,9 +1,15 @@
 {
   "name": "objconf",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "merge json and env vars into config object ",
   "main": "lib.js",
   "repository": "https://github.com/AlecTroemel/objconf",
   "author": "Alec Troemel <alec@mirusresearch.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "ava": "^0.25.0"
+  },
+  "scripts": {
+    "test": "ava test.js"
+  }
 }
