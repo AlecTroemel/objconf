@@ -33,7 +33,7 @@ test('merge file not required fails silently when file doesn not exist', t => {
 test('merge file required fails loudly when file doesn not exist', t => {
     const conf = new Config();
     t.throws(() => {
-        conf.merge_file('file/not/here.json', false);
+        conf.merge_file('file/not/here.json', true);
     }, Error);
 });
 
@@ -46,11 +46,22 @@ test('get returns a copy of the underlying conf obj', t => {
     t.deepEqual(expected, conf.get());
 });
 
-test('merge env', t => {
+test('merge env with no schema', t => {
     const conf = new Config();
     const expected = { test: 'test' };
     process.env.OBJCONF_TEST = 'test';
     conf.merge_env('objconf');
+    t.deepEqual(expected, conf.get());
+});
+
+test('merge env with schema', t => {
+    const conf = new Config();
+    const expected = { testing: 'test' };
+    process.env.TESTING = 'test';
+    process.env.TESTING_TWO = 'should not show up';
+
+    conf.set_schema({ testing: 'string' });
+    conf.merge_env();
     t.deepEqual(expected, conf.get());
 });
 

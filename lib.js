@@ -3,11 +3,21 @@ const fs = require('fs');
 class Config {
     constructor() {
         this.conf = {};
+        this.schema = {};
     }
 
     _is_object(item) {
         return item && typeof item === 'object' && !Array.isArray(item) && item !== null;
     }
+
+    // _intersection(a, b) {
+    //     return a.reduce((acc, val) => {
+    //         if (b.indexOf(val) != -1) {
+    //             acc.push(val);
+    //         }
+    //         return acc;
+    //     }, []);
+    // }
 
     _convert(value) {
         if (value === 'true') return true;
@@ -33,6 +43,22 @@ class Config {
         }
     }
 
+    _in_schema(key_path) {
+        let next = this.schema;
+        for (let key of key_path) {
+            if (next[key] === undefined) {
+                return false;
+            }
+            next = next[key];
+        }
+
+        if (next === undefined) {
+            return false;
+        }
+
+        return true;
+    }
+
     merge_defaults(source) {
         this._merge(this.conf, source);
     }
@@ -48,19 +74,26 @@ class Config {
         }
     }
 
-    merge_env(prefix) {
-        prefix = `${prefix.toLowerCase()}_`;
+    merge_env(prefix, use_schema = true) {
+        if (prefix !== undefined) {
+            prefix = `${prefix.toLowerCase()}_`;
+        }
 
         for (let key in process.env) {
-            let key_lowercase = key.toLowerCase();
-            if (key_lowercase.includes(prefix)) {
-                let value = process.env[key];
-                this._set(
-                    this.conf,
-                    key_lowercase.replace(prefix, '').split('_'),
-                    this._convert(value)
-                );
+            const key_lowercase = key.toLowerCase();
+            const key_path = key_lowercase.replace(prefix, '').split('_');
+
+            if (use_schema && Object.keys(this.schema).length) {
+                if (!this._in_schema(key_path)) {
+                    continue;
+                }
             }
+
+            if (prefix && !key_lowercase.includes(prefix)) {
+                continue;
+            }
+
+            this._set(this.conf, key_path, this._convert(process.env[key]));
         }
     }
 
@@ -109,7 +142,15 @@ class Config {
         }
     }
 
+    set_schema(schema) {
+        this.schema = { ...schema };
+    }
+
     validate(schema) {
+        if (schema === undefined) {
+            schema = this.schema;
+        }
+
         this._validate_recursively(this.conf, schema);
     }
 
