@@ -12,8 +12,10 @@ None of the 100 config libraries on npm did what I wanted... so i created my own
 $ yarn add objconf
 ```
 
+schema after loading
 ```js
     const Config = require('objconf');
+    let conf = new Config();
     conf.merge_defaults({
         a: {
             b: 'something'
@@ -39,7 +41,34 @@ $ yarn add objconf
     console.log(config.c); // => 67890
 ```
 
+
+schema before loading
+```js
+    const Config = require('objconf');
+    let conf = new Config();
+    conf.set_schema({
+        a: {
+            b: 'string'
+        },
+        c: 'number'
+    });
+    conf.merge_env() // only merges env vars 'A', 'B', and 'C'
+    conf.validate()
+```
+
 # API
+
+##### set_schema(obj)
+set the config objects schema
+
+```js
+    conf.set_schema({
+        a: {
+            b: 'string'
+        },
+        c: 'number'
+    });
+```
 
 ##### merge_defaults(obj)
 merge configuration with a given object
@@ -61,15 +90,16 @@ conf.merge_file('./config.json'); // suppresses errors, good for local dev confi
 conf.merge_file('./config.json', true); // raises errors
 ```
 
-##### merge_env(prefix)
-given environment variables with the given prefix. The env var names are converted to lowercase for comparrison and merging into the configuration. So for example the env var `PREFIX_PARENT_CHILD=test` will be merged into the config at `{ parent: { child: 'test' } }`.
+##### merge_env(prefix = '')
+given environment variables with the given prefix. The env var names are converted to lowercase for comparrison and merging into the configuration. So for example the env var `PREFIX_PARENT_CHILD=test` will be merged into the config at `{ parent: { child: 'test' } }`. Prefix is optional, if you do not give one its suggested to add a schema before running this method.
 
 ```js
+conf.merge_env(); // run set_schema() first!
 conf.merge_env('project');
 ```
 
-##### validate(schema)
-takes a schema which is an object with string values. These values can be 'string', 'boolean', 'null ', 'undefined', or 'number'. if the types of the current configuration do not match the schema, an error is thrown.
+##### validate(schema = this.schema)
+takes a schema which is an object with string values. These values can be 'string', 'boolean', 'null ', 'undefined', or 'number'. if the types of the current configuration do not match the schema, an error is thrown. If you have set the schema already you do not need to pass one in
 
 ```js
 conf.merge_defaults({
@@ -91,9 +121,18 @@ conf.validate({
     e: 'null',
     f: 'undefined',
 });
-
 ```
 
+```js
+    conf.set_schema({
+        a: {
+            b: 'string'
+        },
+        c: 'number'
+    });
+    ...
+    conf.validate()
+```
 
 ##### get()
 return a copy of the configuration object
@@ -110,7 +149,6 @@ Issues and PR's are always welcome, just follow the prettier.js style guides des
 this project uses ava, just run `yarn test` (or `npm test` if your into that sort of thing). Test's are good examples on how to use this package
 
 ## Styling ##
-
 This project uses [Prettier.js](https://prettier.io/) for code formating and linting. I would recomend installing it globally as described [here](https://prettier.io/docs/en/install.html) and integrate it with your editor.
 
 here is the configuration used
