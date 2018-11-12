@@ -11,13 +11,26 @@ class Config {
         return item && typeof item === 'object' && !Array.isArray(item) && item !== null;
     }
 
-    _convert(value) {
+    _convert_to_bool(value) {}
+
+    _convert(value, desired_type) {
+        if (desired_type === 'string') return value;
+
         if (value === 'true') return true;
         if (value === 'false') return false;
+        if (desired_type === 'boolean') throw new TypeError(`${value} expected to be boolean`);
+
         if (value === 'null') return null;
+        if (desired_type === 'null') throw new TypeError(`${value} expected to be null`);
+
         if (value === 'undefined') return undefined;
+        if (desired_type === 'undefined') throw new TypeError(`${value} expected to be undefined`);
+
         let number = Math.trunc(value);
-        return isNaN(number) ? value : number;
+        if (!isNaN(number)) return number;
+        if (desired_type === 'number') throw new TypeError(`${value} expected to be number`);
+
+        return value;
     }
 
     _merge(target, source) {
@@ -48,7 +61,7 @@ class Config {
             return false;
         }
 
-        return true;
+        return next;
     }
 
     merge_defaults(source) {
@@ -75,8 +88,11 @@ class Config {
             const cleaned_key = this.preserveCase ? key : key.toLowerCase();
             const key_path = cleaned_key.replace(prefix, '').split('_');
 
+            let prefered_type = undefined;
             if (use_schema && Object.keys(this.schema).length) {
-                if (!this._in_schema(key_path)) {
+                prefered_type = this._in_schema(key_path);
+
+                if (!prefered_type) {
                     continue;
                 }
             }
@@ -85,7 +101,7 @@ class Config {
                 continue;
             }
 
-            this._set(this.conf, key_path, this._convert(process.env[key]));
+            this._set(this.conf, key_path, this._convert(process.env[key], prefered_type));
         }
     }
 

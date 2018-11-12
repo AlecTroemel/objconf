@@ -89,6 +89,25 @@ test('merge env with schema', t => {
     t.deepEqual(expected, conf.get());
 });
 
+test('ensure prefered type when schema set before merges', t => {
+    const conf = new Config();
+    process.env.TESTING = 'not a number';
+
+    t.throws(() => {
+        conf.set_schema({ testing: 'number' });
+        conf.merge_env();
+    }, TypeError);
+});
+
+test('preserve prefered type when multiple valid options', t => {
+    const conf = new Config();
+    const expected = { testing: '12345' };
+    process.env.TESTING = '12345';
+    conf.set_schema({ testing: 'string' });
+    conf.merge_env();
+    t.deepEqual(expected, conf.get());
+});
+
 test('validate passes', t => {
     const conf = new Config();
     conf.merge_defaults({
