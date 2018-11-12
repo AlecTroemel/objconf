@@ -1,23 +1,15 @@
 const fs = require('fs');
 
 class Config {
-    constructor() {
+    constructor(config) {
         this.conf = {};
         this.schema = {};
+        this.preserveCase = config ? config.preserveCase === true : false;
     }
 
     _is_object(item) {
         return item && typeof item === 'object' && !Array.isArray(item) && item !== null;
     }
-
-    // _intersection(a, b) {
-    //     return a.reduce((acc, val) => {
-    //         if (b.indexOf(val) != -1) {
-    //             acc.push(val);
-    //         }
-    //         return acc;
-    //     }, []);
-    // }
 
     _convert(value) {
         if (value === 'true') return true;
@@ -76,12 +68,12 @@ class Config {
 
     merge_env(prefix, use_schema = true) {
         if (prefix !== undefined) {
-            prefix = `${prefix.toLowerCase()}_`;
+            prefix = `${this.preserveCase ? prefix : prefix.toLowerCase()}_`;
         }
 
         for (let key in process.env) {
-            const key_lowercase = key.toLowerCase();
-            const key_path = key_lowercase.replace(prefix, '').split('_');
+            const cleaned_key = this.preserveCase ? key : key.toLowerCase();
+            const key_path = cleaned_key.replace(prefix, '').split('_');
 
             if (use_schema && Object.keys(this.schema).length) {
                 if (!this._in_schema(key_path)) {
@@ -89,7 +81,7 @@ class Config {
                 }
             }
 
-            if (prefix && !key_lowercase.includes(prefix)) {
+            if (prefix && !cleaned_key.includes(prefix)) {
                 continue;
             }
 

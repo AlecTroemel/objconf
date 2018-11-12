@@ -54,6 +54,30 @@ test('merge env with no schema', t => {
     t.deepEqual(expected, conf.get());
 });
 
+test('merge env with more complicated env and preserve cases', t => {
+    const conf = new Config({ preserveCase: true });
+    const schema = {
+        limiter: {
+            capacity: 'number',
+            interval: 'number',
+            maxWaitingTime: 'number',
+        },
+    };
+    const expected = {
+        limiter: {
+            capacity: 5,
+            interval: 1,
+            maxWaitingTime: 10,
+        },
+    };
+    process.env.limiter_maxWaitingTime = '10';
+    process.env.limiter_capacity = '5';
+    process.env.limiter_interval = '1';
+    conf.set_schema(schema);
+    conf.merge_env();
+    t.deepEqual(expected, conf.get());
+});
+
 test('merge env with schema', t => {
     const conf = new Config();
     const expected = { testing: 'test' };

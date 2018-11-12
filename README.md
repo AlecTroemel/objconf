@@ -58,6 +58,10 @@ schema before loading
 
 # API
 
+#### constructor(options)
+- `options.preserveCase`: default `false, dont convert keys and prefix's to lowercase
+
+
 ##### set_schema(obj)
 set the config objects schema
 
@@ -91,7 +95,7 @@ conf.merge_file('./config.json', true); // raises errors
 ```
 
 ##### merge_env(prefix = '')
-given environment variables with the given prefix. The env var names are converted to lowercase for comparrison and merging into the configuration. So for example the env var `PREFIX_PARENT_CHILD=test` will be merged into the config at `{ parent: { child: 'test' } }`. Prefix is optional, if you do not give one its suggested to add a schema before running this method.
+given environment variables with the given prefix. The env var names by default are converted to lowercase for comparrison and merging into the configuration. So for example the env var `PREFIX_PARENT_CHILD=test` will be merged into the config at `{ parent: { child: 'test' } }`. Prefix is optional, if you do not give one its suggested to add a schema before running this method.
 
 ```js
 conf.merge_env(); // run set_schema() first!
